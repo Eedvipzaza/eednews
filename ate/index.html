@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Management - Add News</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .news-list {
+            margin-top: 20px;
+        }
+
+        .news-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .news-item h3 {
+            margin: 0;
+        }
+
+        .news-item button {
+            background-color: #e74c3c;
+        }
+
+        .news-item button:hover {
+            background-color: #c0392b;
+        }
+    </style>
+    <script>
+        let newsList = [];
+
+        function addNews(event) {
+            event.preventDefault();
+            const title = document.getElementById('news-title').value;
+            const description = document.getElementById('news-description').value;
+
+            if (title && description) {
+                newsList.push({ title, description });
+                document.getElementById('news-title').value = '';
+                document.getElementById('news-description').value = '';
+                renderNewsList();
+            } else {
+                alert('Please fill out all fields!');
+            }
+        }
+
+        function deleteNews(index) {
+            newsList.splice(index, 1);
+            renderNewsList();
+        }
+
+        function renderNewsList() {
+            const newsContainer = document.getElementById('news-list');
+            newsContainer.innerHTML = '';
+
+            newsList.forEach((news, index) => {
+                const newsItem = document.createElement('div');
+                newsItem.className = 'news-item';
+
+                const newsContent = document.createElement('h3');
+                newsContent.textContent = news.title;
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => deleteNews(index);
+
+                newsItem.appendChild(newsContent);
+                newsItem.appendChild(deleteButton);
+                newsContainer.appendChild(newsItem);
+            });
+
+            localStorage.setItem('newsList', JSON.stringify(newsList));
+        }
+
+        function navigateToNewsPage() {
+            localStorage.setItem('newsList', JSON.stringify(newsList));
+            window.location.href = 'news.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedNews = JSON.parse(localStorage.getItem('newsList'));
+            if (storedNews) {
+                newsList = storedNews;
+                renderNewsList();
+            }
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <h1>เต้คุยข่าว</h1>
+    </header>
+
+    <main>
+        <h1>Add News</h1>
+        <form onsubmit="addNews(event)">
+            <label for="news-title">News Title:</label>
+            <input type="text" id="news-title" placeholder="Enter the news title">
+
+            <label for="news-description">News Description:</label>
+            <textarea id="news-description" rows="4" placeholder="Enter the news description"></textarea>
+
+            <button type="submit">Add News</button>
+        </form>
+
+        <div class="news-list" id="news-list"></div>
+
+        <button onclick="navigateToNewsPage()">Go to Latest News Page</button>
+    </main>
+</body>
+</html>
